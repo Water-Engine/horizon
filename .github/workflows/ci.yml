@@ -1,0 +1,52 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/ci.yml'
+      - 'Makefile'
+      - 'src/**'
+      - 'include/**'
+      - 'tests/**'
+  pull_request:
+    branches: [main]
+    paths:
+      - '.github/workflows/ci.yml'
+      - 'Makefile'
+      - 'src/**'
+      - 'include/**'
+      - 'tests/**'
+
+jobs:
+  build-test:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Install build tools (Linux)
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt update
+          sudo apt install -y build-essential clang-format g++
+
+      - name: Install build tools (macOS)
+        if: runner.os == 'macOS'
+        run: |
+          brew update
+          brew install gcc clang-format make
+
+      - name: Install build tools (Windows)
+        if: runner.os == 'Windows'
+        run: |
+          choco install mingw make -y
+
+      - name: Run tests
+        run: |
+          make clean
+          make test
