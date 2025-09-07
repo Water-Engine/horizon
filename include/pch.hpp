@@ -42,7 +42,6 @@
 
 // SIMD
 #include "xsimd/xsimd.hpp"
-#include <immintrin.h>
 
 // Chess Core Library
 #pragma GCC diagnostic push

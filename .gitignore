@@ -39,3 +39,6 @@
 
 # debug information files
 *.dwo
+
+Horizon-Main.json
+**.bin

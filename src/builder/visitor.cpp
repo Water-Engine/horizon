@@ -2,12 +2,24 @@
 
 #include "builder/visitor.hpp"
 
-void PGNVisitor::startPgn() { m_Board.setFen(STARTING_FEN); }
+void PGNVisitor::startPgn() {
+    m_Board.setFen(STARTING_FEN);
+    m_NumHalfMovesSoFar = 0;
+}
 
-void PGNVisitor::header(std::string_view key, std::string_view value) {}
+void PGNVisitor::move(std::string_view move, [[maybe_unused]] std::string_view comment) {
+    uint64_t halfmove_cutoff = m_MaxOpeningDepth * 2;
+    Move parsed_move = uci::parseSan(m_Board, move);
 
-void PGNVisitor::startMoves() {}
+    uint64_t key = m_Board.hash();
+    uint16_t encoded_move = parsed_move.move();
 
-void PGNVisitor::move(std::string_view move, std::string_view comment) {}
+    if (m_NumHalfMovesSoFar < halfmove_cutoff) {
+        add_to_map(key, encoded_move);
+    }
 
-void PGNVisitor::endPgn() {}
+    m_Board.makeMove(parsed_move);
+    m_NumHalfMovesSoFar++;
+}
+
+void PGNVisitor::endPgn() { try_flush(); }

@@ -1,6 +1,7 @@
 #include <pch.hpp>
 
 #include "builder/builder.hpp"
+#include "builder/visitor.hpp"
 
 std::vector<std::filesystem::path> collect_pgns(std::string pgn_parent_directory,
                                                 std::string pgn_file_extension) {
@@ -25,6 +26,20 @@ std::vector<std::filesystem::path> collect_pgns(std::string pgn_parent_directory
 }
 
 int make_book(int depth, const std::vector<std::filesystem::path>& files, std::string output_file) {
-pgn:
+    if (files.empty()) {
+        return 1;
+    }
+
+    std::ifstream file_stream(files[0]);
+    pgn::StreamParser parser(file_stream);
+
+    PGNVisitor visitor(depth, output_file);
+    auto error = parser.readGames(visitor);
+
+    if (error.hasError()) {
+        fmt::eprintln(error.message());
+        return error.code();
+    }
+
     return 0;
 }
