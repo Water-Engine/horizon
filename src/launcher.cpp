@@ -14,6 +14,7 @@ void usage() {
 }
 
 int launch(int argc, char* argv[]) {
+    PROFILE_FUNCTION();
     int depth = DEFAULT_DEPTH;
     std::string pgn_parent = str::from_view(DEFAULT_PGN_PARENT);
     std::string pgn_ext = str::from_view(DEFAULT_PGN_EXT);

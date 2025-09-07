@@ -54,6 +54,8 @@ using namespace chess;
 // Other
 #include "core/core.hpp"
 #include "core/utils.hpp"
+
+#define INCBIN_SILENCE_BITCODE_WARNING
 #include "incbin/incbin.h"
 
 #endif // WATER_PCH

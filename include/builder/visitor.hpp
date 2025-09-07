@@ -17,8 +17,11 @@ class PGNVisitor : public pgn::Visitor {
     std::unordered_map<uint64_t, std::unordered_map<uint16_t, uint16_t>> m_PositionMap;
 
     uint64_t m_NumHalfMovesSoFar;
-    
+
     std::ofstream m_OutFile;
+    uint64_t m_IllegalCounter;
+    uint64_t m_LegalCounter;
+    uint64_t m_GameCounter;
 
   private:
     inline void flush() {
@@ -75,11 +78,16 @@ class PGNVisitor : public pgn::Visitor {
     virtual ~PGNVisitor() {
         try_flush();
         flush();
+        fmt::println("Parsed {} total games", m_GameCounter);
+        fmt::println("\tPlayed {} legal moves", m_LegalCounter);
+        fmt::println("\tSkipped {} illegal moves", m_IllegalCounter);
     }
 
     virtual void startPgn() override;
-    virtual void header([[maybe_unused]] std::string_view key, [[maybe_unused]] std::string_view value) override {}
+    virtual void header([[maybe_unused]] std::string_view key,
+                        [[maybe_unused]] std::string_view value) override {}
     virtual void startMoves() override {}
-    virtual void move([[maybe_unused]] std::string_view move, [[maybe_unused]] std::string_view comment) override;
+    virtual void move([[maybe_unused]] std::string_view move,
+                      [[maybe_unused]] std::string_view comment) override;
     virtual void endPgn() override;
 };

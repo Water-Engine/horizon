@@ -26,19 +26,22 @@ std::vector<std::filesystem::path> collect_pgns(std::string pgn_parent_directory
 }
 
 int make_book(int depth, const std::vector<std::filesystem::path>& files, std::string output_file) {
+    PROFILE_FUNCTION();
     if (files.empty()) {
         return 1;
     }
 
-    std::ifstream file_stream(files[0]);
-    pgn::StreamParser parser(file_stream);
-
     PGNVisitor visitor(depth, output_file);
-    auto error = parser.readGames(visitor);
+    for (const auto& file : files) {
+        PROFILE_SCOPE(fmt::interpolate("Parse {}", file.string()).c_str());
+        std::ifstream file_stream(file);
+        pgn::StreamParser parser(file_stream);
 
-    if (error.hasError()) {
-        fmt::eprintln(error.message());
-        return error.code();
+        auto error = parser.readGames(visitor);
+        if (error.hasError()) {
+            fmt::eprintln(error.message());
+            return error.code();
+        }
     }
 
     return 0;

@@ -3,7 +3,7 @@
 #include "builder/visitor.hpp"
 
 void PGNVisitor::startPgn() {
-    m_Board.setFen(STARTING_FEN);
+    m_Board = Board();
     m_NumHalfMovesSoFar = 0;
 }
 
@@ -18,8 +18,19 @@ void PGNVisitor::move(std::string_view move, [[maybe_unused]] std::string_view c
         add_to_map(key, encoded_move);
     }
 
+    Movelist moves;
+    movegen::legalmoves(moves, m_Board);
+    if (!contains(moves, parsed_move)) {
+        m_IllegalCounter += 1;
+        return;
+    }
+
     m_Board.makeMove(parsed_move);
+    m_LegalCounter += 1;
     m_NumHalfMovesSoFar++;
 }
 
-void PGNVisitor::endPgn() { try_flush(); }
+void PGNVisitor::endPgn() {
+    try_flush();
+    m_GameCounter += 1;
+}
