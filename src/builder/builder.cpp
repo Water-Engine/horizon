@@ -33,6 +33,10 @@ int make_book(int depth, const std::vector<std::filesystem::path>& files, std::s
 
     PGNVisitor visitor(depth, output_file);
     for (const auto& file : files) {
+        if (!std::filesystem::exists(file)) {
+            continue;
+        }
+        
         PROFILE_SCOPE(fmt::interpolate("Parse {}", file.string()).c_str());
         std::ifstream file_stream(file);
         pgn::StreamParser parser(file_stream);

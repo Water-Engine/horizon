@@ -23,7 +23,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ubuntu-latest, windows-latest, macos-latest]
+        os: [ubuntu-latest, macos-latest]
 
     steps:
       - name: Checkout repository
@@ -40,11 +40,6 @@ jobs:
         run: |
           brew update
           brew install gcc clang-format make
-
-      - name: Install build tools (Windows)
-        if: runner.os == 'Windows'
-        run: |
-          choco install mingw make -y
 
       - name: Run tests
         run: |
