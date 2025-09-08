@@ -91,7 +91,7 @@ test: $(TEST_BIN)
 TEST_OBJS := $(patsubst $(TEST_DIR)/%.cpp,$(BUILD_DIR)/tests/%.o,$(TEST_SRCS))
 CATCH_OBJ := $(BUILD_DIR)/tests/catch_amalgamated.o
 LIB_OBJS_FOR_TESTS := $(filter-out $(OBJ_DIR_DEBUG)/main.o,$(OBJS_DEBUG))
-CXXFLAGS_TEST = -std=c++20 -O2 -Wall -Wextra $(INCLUDES) $(DEPFLAGS) -DTEST
+CXXFLAGS_TEST = -std=c++20 -O0 -Wall -Wextra $(INCLUDES) $(DEPFLAGS) -DTEST
 
 $(BUILD_DIR)/tests/%.o: $(TEST_DIR)/%.cpp $(HEADERS) $(PCH_GCH_RELEASE)
 	@$(call MKDIR,$(dir $@))
@@ -104,30 +104,6 @@ $(CATCH_OBJ): $(TEST_DIR)/test_framework/catch_amalgamated.cpp
 $(TEST_BIN): $(CATCH_OBJ) $(TEST_OBJS) $(LIB_OBJS_FOR_TESTS)
 	@$(call MKDIR,$(dir $@))
 	$(CXX) $(CXXFLAGS_TEST) -o $@ $^
-
-# ================ PERFT TARGET ================
-
-PERFT_TEST_SRC := $(TEST_DIR)/perft.cpp
-PERFT_OBJ_DIR := $(BUILD_DIR)/perft
-PERFT_OBJ := $(PERFT_OBJ_DIR)/perft.o
-CATCH_OBJ_PERFT := $(PERFT_OBJ_DIR)/catch_amalgamated.o
-
-CXXFLAGS_PERFT = -std=c++20 -O2 -Wall -Wextra $(INCLUDES) $(DEPFLAGS) -DPERFT
-
-$(PERFT_OBJ): $(PERFT_TEST_SRC) $(HEADERS) $(PCH_GCH_RELEASE)
-	@$(call MKDIR,$(dir $@))
-	$(CXX) $(CXXFLAGS_PERFT) -include $(PCH) $(INCLUDES) -I$(TEST_DIR) -c $< -o $@
-
-$(CATCH_OBJ_PERFT): $(TEST_DIR)/test_framework/catch_amalgamated.cpp
-	@$(call MKDIR,$(dir $@))
-	$(CXX) $(CXXFLAGS_PERFT) $(INCLUDES) -I$(TEST_DIR) -c $< -o $@
-
-$(PERFT_BIN): $(CATCH_OBJ_PERFT) $(PERFT_OBJ) $(LIB_OBJS_FOR_TESTS)
-	@$(call MKDIR,$(dir $@))
-	$(CXX) $(CXXFLAGS_PERFT) -o $@ $^
-
-perft: $(PERFT_BIN)
-	@$(PERFT_BIN)
 
 # ================ BINARY DIRECTORIES ================
 
@@ -211,17 +187,6 @@ fmt:
 
 fmt-check:
 	@clang-format --dry-run --Werror $(FMT_SRCS)
-
-# ================ MAGIC BITBOARD GENERATOR ================
-
-SLIDER_BIN := scripts/slider_generators$(EXE)
-
-sliders: $(SLIDER_BIN)
-	@$(SLIDER_BIN)
-
-$(SLIDER_BIN): scripts/slider_generators.c
-	@$(call MKDIR,$(BIN_ROOT))
-	$(C) -std=c11 $< -o $@
 
 # ================ HELP ME ================
 
