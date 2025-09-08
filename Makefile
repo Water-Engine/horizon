@@ -241,7 +241,6 @@ dist              > Max optimization, profiling disabled\n\
 release           > Slightly fewer optimizations, no DEBUG define\n\
 debug             > No optimization, PROFILE and DEBUG defined\n\
 test              > Run unit tests (excludes perft tests)\n\
-perft             > Run the perft tests\n\
 run               > Build and run the release binary\n\
 run-dist          > Build and run the dist binary\n\
 run-release       > Build and run the release binary\n\
@@ -257,5 +256,5 @@ help              > Print this help menu\n\
 "
 
 .PHONY: default install all dist release debug \
-		test perft run run-dist run-release run-debug \
-		clean fmt fmt-check cloc sliders help
+		test run run-dist run-release run-debug \
+		clean fmt fmt-check cloc help

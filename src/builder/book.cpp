@@ -2,7 +2,7 @@
 
 #include "core/book.hpp"
 
-INCBIN(BOOK, "polyglot.bin");
+INCBIN(BOOK, "test.poly");
 
 Book::Book() : m_UniformRealDist(0.0f, 1.0f), m_Rng(std::random_device{}()) {
     auto gm_moves = load_polyglot(reinterpret_cast<const unsigned char*>(gBOOKData), gBOOKSize);

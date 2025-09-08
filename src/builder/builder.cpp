@@ -40,7 +40,7 @@ int make_book(int depth, const std::vector<std::filesystem::path>& files, std::s
         auto error = parser.readGames(visitor);
         if (error.hasError()) {
             fmt::eprintln(error.message());
-            return error.code();
+            continue;
         }
     }
 

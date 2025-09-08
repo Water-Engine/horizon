@@ -13,6 +13,14 @@ By default, horizon is designed to scan a directory named `pgn` and will build a
 ./horizon -depth=4
 ```
 
+# Core Dependencies
+- g++ with C++20
+- GNU Make
+- Clang-format
+- [Catch2](https://github.com/catchorg/Catch2) (included in this repository)
+- [cloc](https://github.com/AlDanial/cloc) (for cloc make target > optional)
+- [python](https://www.python.org/downloads/) for script running
+
 ## Run Options
 The following help menu is shown when running horizon with the `-help` flag:
 ```
@@ -37,16 +45,16 @@ OPTIONS:
         Default: polyglot.bin
 ```
 
-# Core Dependencies
-- g++ with C++20
-- GNU Make
-- Clang-format
-- [Catch2](https://github.com/catchorg/Catch2) (included in this repository)
-- [cloc](https://github.com/AlDanial/cloc) (for cloc make target > optional)
-- [python](https://www.python.org/downloads/) for script running
+# Mass Downloading PGNs
+The `pgn` folder contains what I think are relevant openings for a standard engine. You may want to use a larger set of games, which can be batch downloaded using the `get_pgns` python script. Simply run:
+```shell
+pip install requests beautifulsoup4
+python get_pgns.py
+```
+This will download the pgns from [PGN Mentor](https://www.pgnmentor.com/files.html), creating a directory of all organized files (full_pgn_db). You can now pass this parent directory to horizon. Assuming full and successful extraction, this will result in 370,000,000+ moves being parsed, with the resulting binary containing 54,000,000 moves of opening data at default depth.
 
 # Game Database
-All game data in this repository's included PGN files is provided by [PGN Mentor](https://www.pgnmentor.com/files.html). A wide breadth of openings are included, as well specific games from high level tournaments/player and world championship games.
+All game data in this repository's included PGN files is provided by [PGN Mentor](https://www.pgnmentor.com/files.html). A wide breadth of openings are included, as well specific games from high level tournaments/players and world championship games.
 
 # A Warning...
 This polyglot generator uses the [chess-library](https://github.com/Disservin/chess-library) to generate the corresponding position hashes. Due to the nature of the polyglot format, you must use the same zobrist hashing keys to properly query opening positions. This requires that you use the same library, or that you use the exact same seeded randoms for your hashing implementation. To my knowledge, this library uses the standard polyglot randoms, but I cannot make any guarantee that generated tables will be universally compatible. From a quick check, the randoms align with [python's chess library](https://python-chess.readthedocs.io/en/latest/index.html).
