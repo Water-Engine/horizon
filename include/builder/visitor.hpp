@@ -2,12 +2,14 @@
 
 constexpr size_t MAX_BUFFER_SIZE = 64 * 1024;
 
+#pragma pack(push, 1)
 struct PolyEntry {
     uint64_t key;
     uint16_t move;
     uint16_t weight;
-    uint32_t learn;
+    uint16_t learn;
 };
+#pragma pack(pop)
 
 class PGNVisitor : public pgn::Visitor {
   private:
@@ -18,20 +20,46 @@ class PGNVisitor : public pgn::Visitor {
 
     uint64_t m_NumHalfMovesSoFar;
 
+    std::string m_OutFileName;
     std::ofstream m_OutFile;
+
     uint64_t m_IllegalCounter;
     uint64_t m_LegalCounter;
     uint64_t m_GameCounter;
+    uint64_t m_TotalMoves;
 
   private:
+    static inline void write_entry(std::ofstream& out, const PolyEntry& e) {
+        auto put16 = [&](uint16_t v) {
+            unsigned char buf[2] = {static_cast<unsigned char>(v >> 8),
+                                    static_cast<unsigned char>(v & 0xFF)};
+            out.write(reinterpret_cast<const char*>(buf), 2);
+        };
+        auto put64 = [&](uint64_t v) {
+            unsigned char buf[8];
+            for (int i = 7; i >= 0; --i) {
+                buf[7 - i] = static_cast<unsigned char>((v >> (i * 8)) & 0xFF);
+            }
+            out.write(reinterpret_cast<const char*>(buf), 8);
+        };
+
+        put64(e.key);
+        put16(e.move);
+        put16(e.weight);
+        put16(e.learn);
+    }
+
     inline void flush() {
         PROFILE_FUNCTION();
         if (m_Buffer.empty()) {
             return;
         }
 
-        m_OutFile.write(reinterpret_cast<const char*>(m_Buffer.data()),
-                        m_Buffer.size() * sizeof(PolyEntry));
+        for (const auto& entry : m_Buffer) {
+            write_entry(m_OutFile, entry);
+        }
+
+        m_TotalMoves += m_Buffer.size();
         m_Buffer.clear();
     }
 
@@ -67,20 +95,24 @@ class PGNVisitor : public pgn::Visitor {
 
   public:
     PGNVisitor(uint64_t depth, const std::string& out_file)
-        : m_Board(), m_MaxOpeningDepth(depth), m_NumHalfMovesSoFar(0),
+        : m_Board(), m_MaxOpeningDepth(depth), m_NumHalfMovesSoFar(0), m_OutFileName(out_file),
           m_OutFile(out_file, std::ios::binary | std::ios::out) {
         if (!m_OutFile.is_open()) {
             throw std::runtime_error("Failed to open output file");
         }
+
+        m_Board.setFen(constants::STARTPOS);
         m_Buffer.reserve(MAX_BUFFER_SIZE);
     }
 
     virtual ~PGNVisitor() {
         try_flush();
         flush();
-        fmt::println("Parsed {} total games", m_GameCounter);
+
+        fmt::println("Successfully parsed {} total games", m_GameCounter);
         fmt::println("\tPlayed {} legal moves", m_LegalCounter);
         fmt::println("\tSkipped {} illegal moves", m_IllegalCounter);
+        fmt::println("Compiled {} moves into {}", m_TotalMoves, m_OutFileName);
     }
 
     virtual void startPgn() override;

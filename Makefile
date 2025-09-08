@@ -68,7 +68,7 @@ TARGET_BIN_RELEASE := $(BIN_DIR_RELEASE)/$(TARGET)$(EXE)
 
 OBJ_DIR_DEBUG := $(BUILD_DIR)/debug
 BIN_DIR_DEBUG := $(BIN_ROOT)/debug
-CXXFLAGS_DEBUG := -std=c++20 -O0 -Wall -Wextra -g $(INCLUDES) $(DEPFLAGS) -DDEBUG -DPROFILE
+CXXFLAGS_DEBUG := -std=c++20 -O0 -Wall -Wextra -g $(INCLUDES) $(DEPFLAGS) -DDEBUG
 
 OBJS_DEBUG := $(patsubst $(SRC_DIR)/%.cpp,$(OBJ_DIR_DEBUG)/%.o,$(SRCS))
 PCH_GCH_DEBUG := $(OBJ_DIR_DEBUG)/pch.hpp.gch

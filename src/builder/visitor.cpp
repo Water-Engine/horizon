@@ -3,15 +3,15 @@
 #include "builder/visitor.hpp"
 
 void PGNVisitor::startPgn() {
-    m_Board = Board();
+    m_Board.setFen(constants::STARTPOS);
     m_NumHalfMovesSoFar = 0;
 }
 
 void PGNVisitor::move(std::string_view move, [[maybe_unused]] std::string_view comment) {
     uint64_t halfmove_cutoff = m_MaxOpeningDepth * 2;
-    Move parsed_move = uci::parseSan(m_Board, move);
-
     uint64_t key = m_Board.hash();
+
+    Move parsed_move = uci::parseSan(m_Board, move);
     uint16_t encoded_move = parsed_move.move();
 
     if (m_NumHalfMovesSoFar < halfmove_cutoff) {
