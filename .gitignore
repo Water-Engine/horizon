@@ -44,3 +44,8 @@ Horizon-Main.json
 **.bin
 pgn
 full_pgn_db
+
+.zig-cache
+zig-out
+
+release/

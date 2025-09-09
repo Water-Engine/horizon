@@ -1,5 +1,7 @@
 #pragma once
 
+#if !defined(EXAMPLE) || !defined(TEST)
+
 struct PolyglotMove {
     uint16_t Compact;
     uint16_t Weight;
@@ -43,3 +45,5 @@ class Book {
     bool is_book_pos(Ref<Board> board);
     Option<std::string> try_get_book_move(Ref<Board> board, float weight = 0.25);
 };
+
+#endif

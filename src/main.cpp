@@ -4,16 +4,16 @@
 
 #include "core/book.hpp"
 
-int main(int argc, char* argv[]) {
+int main([[maybe_unused]] int argc, [[maybe_unused]] char* argv[]) {
     PROFILE_BEGIN_SESSION("Horizon", "Horizon-Main.json");
-#if 1
+#if !defined(EXAMPLE) || !defined(TEST)
     int status = launch(argc, argv);
     exit(status);
 #else
     // Example using using water's API
     auto board = CreateRef<Board>();
     auto& book = Book::instance();
-    DBG(book.is_book_pos(board));
+    fmt::println("Opening position in book: {}", book.is_book_pos(board));
 #endif
     PROFILE_END_SESSION();
 }

@@ -74,6 +74,16 @@ OBJS_DEBUG := $(patsubst $(SRC_DIR)/%.cpp,$(OBJ_DIR_DEBUG)/%.o,$(SRCS))
 PCH_GCH_DEBUG := $(OBJ_DIR_DEBUG)/pch.hpp.gch
 TARGET_BIN_DEBUG := $(BIN_DIR_DEBUG)/$(TARGET)$(EXE)
 
+# ================ EXAMPLE CONFIG ================
+
+OBJ_DIR_EXAMPLE := $(BUILD_DIR)/example
+BIN_DIR_EXAMPLE := $(BIN_ROOT)/example
+CXXFLAGS_EXAMPLE := -std=c++20 -O3 -Wall -Wextra $(INCLUDES) $(DEPFLAGS) -DEXAMPLE
+
+OBJS_EXAMPLE := $(patsubst $(SRC_DIR)/%.cpp,$(OBJ_DIR_EXAMPLE)/%.o,$(SRCS))
+PCH_GCH_EXAMPLE := $(OBJ_DIR_EXAMPLE)/pch.hpp.gch
+TARGET_BIN_EXAMPLE := $(BIN_DIR_EXAMPLE)/$(TARGET)$(EXE)
+
 # ================ BUILD TARGETS ================
 
 default: release
@@ -91,7 +101,7 @@ test: $(TEST_BIN)
 TEST_OBJS := $(patsubst $(TEST_DIR)/%.cpp,$(BUILD_DIR)/tests/%.o,$(TEST_SRCS))
 CATCH_OBJ := $(BUILD_DIR)/tests/catch_amalgamated.o
 LIB_OBJS_FOR_TESTS := $(filter-out $(OBJ_DIR_DEBUG)/main.o,$(OBJS_DEBUG))
-CXXFLAGS_TEST = -std=c++20 -O0 -Wall -Wextra $(INCLUDES) $(DEPFLAGS) -DTEST
+CXXFLAGS_TEST = -std=c++20 -O0 -Wall -Wextra $(INCLUDES) $(DEPFLAGS) -DTEST -DEXAMPLE
 
 $(BUILD_DIR)/tests/%.o: $(TEST_DIR)/%.cpp $(HEADERS) $(PCH_GCH_RELEASE)
 	@$(call MKDIR,$(dir $@))
@@ -119,6 +129,10 @@ $(TARGET_BIN_DEBUG): $(OBJS_DEBUG)
 	@$(call MKDIR,$(BIN_DIR_DEBUG))
 	$(CXX) $(CXXFLAGS_DEBUG) -o $@ $^
 
+$(TARGET_BIN_EXAMPLE): $(OBJS_EXAMPLE)
+	@$(call MKDIR,$(BIN_DIR_EXAMPLE))
+	$(CXX) $(CXXFLAGS_EXAMPLE) -o $@ $^
+
 # ================ OBJECT DIRECTORIES ================
 
 $(OBJ_DIR_DIST)/%.o: $(SRC_DIR)/%.cpp $(HEADERS) $(PCH_GCH_DIST)
@@ -132,6 +146,10 @@ $(OBJ_DIR_RELEASE)/%.o: $(SRC_DIR)/%.cpp $(HEADERS) $(PCH_GCH_RELEASE)
 $(OBJ_DIR_DEBUG)/%.o: $(SRC_DIR)/%.cpp $(HEADERS) $(PCH_GCH_DEBUG)
 	@$(call MKDIR,$(dir $@))
 	$(CXX) $(CXXFLAGS_DEBUG) -include $(PCH) -c $< -o $@
+
+$(OBJ_DIR_EXAMPLE)/%.o: $(SRC_DIR)/%.cpp $(HEADERS) $(PCH_GCH_EXAMPLE)
+	@$(call MKDIR,$(dir $@))
+	$(CXX) $(CXXFLAGS_EXAMPLE) -include $(PCH) -c $< -o $@
 
 # ================ PRECOMPILED HEADER ================
 
@@ -147,11 +165,16 @@ $(PCH_GCH_DEBUG): $(PCH)
 	@$(call MKDIR,$(OBJ_DIR_DEBUG))
 	$(CXX) $(CXXFLAGS_DEBUG) -x c++-header $(PCH) -o $@
 
+$(PCH_GCH_EXAMPLE): $(PCH)
+	@$(call MKDIR,$(OBJ_DIR_EXAMPLE))
+	$(CXX) $(CXXFLAGS_EXAMPLE) -x c++-header $(PCH) -o $@
+
 # ================ INCLUDES ================
 
 -include $(OBJS_DIST:.o=.d)
 -include $(OBJS_RELEASE:.o=.d)
 -include $(OBJS_DEBUG:.o=.d)
+-include $(OBJS_EXAMPLE:.o=.d)
 
 # ================ OTHER TARGETS ================
 
@@ -167,6 +190,9 @@ run-release: $(TARGET_BIN_RELEASE)
 
 run-debug: $(TARGET_BIN_DEBUG)
 	@$(TARGET_BIN_DEBUG) $(ARGS)
+
+example: $(TARGET_BIN_EXAMPLE)
+	@$(TARGET_BIN_EXAMPLE)
 
 clean:
 ifeq ($(OS),Windows_NT)
@@ -212,6 +238,7 @@ run-release       > Build and run the release binary\n\
 run-debug         > Build and run the debug binary\n\
 fmt               > Format all source and header files with clang-format\n\
 fmt-check         > Check formatting rules without modifying files\n\
+example           > Run the example which hooks into a snippet of water's API\n\
 clean             > Remove object files, dependency files, and binaries\n\
 \n\
 General Targets:\n\
@@ -222,4 +249,4 @@ help              > Print this help menu\n\
 
 .PHONY: default install all dist release debug \
 		test run run-dist run-release run-debug \
-		clean fmt fmt-check cloc help
+		example clean fmt fmt-check cloc help

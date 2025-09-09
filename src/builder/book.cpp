@@ -2,6 +2,8 @@
 
 #include "core/book.hpp"
 
+#if !defined(EXAMPLE) || !defined(TEST)
+
 INCBIN(BOOK, "test.poly");
 
 Book::Book() : m_UniformRealDist(0.0f, 1.0f), m_Rng(std::random_device{}()) {
@@ -91,3 +93,5 @@ Option<std::string> Book::try_get_book_move(Ref<Board> board, float weight) {
 
     return Option<std::string>(moves[idx].MoveString);
 }
+
+#endif
