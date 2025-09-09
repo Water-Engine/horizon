@@ -19,7 +19,6 @@ To view the program's help info (available commands & defaults), simply pass the
 - g++ with C++20
 - GNU Make
 - Clang-format
-- [Catch2](https://github.com/catchorg/Catch2) for tests (included in this repository)
 - [cloc](https://github.com/AlDanial/cloc) for cloc make target (optional)
 - [python](https://www.python.org/downloads/) for script running
 - [Zig](https://ziglang.org/download/) for cross-platform packaging (optional) 
@@ -66,4 +65,4 @@ All game data in this repository's included PGN files is provided by [PGN Mentor
 This polyglot generator uses the [chess-library](https://github.com/Disservin/chess-library) to generate the corresponding position hashes. Due to the nature of the polyglot format, you must use the same zobrist hashing keys to properly query opening positions. This requires that you use the same library, or that you use the exact same seeded randoms for your hashing implementation. To my knowledge, this library uses the standard polyglot randoms, but I cannot make any guarantee that generated tables will be universally compatible. From a quick check, the randoms align with [python's chess library](https://python-chess.readthedocs.io/en/latest/index.html).
 
 # For Developers
-Contributing guidelines, information on tests, formatting, and profiling can be found in [CONTRIBUTING.md](.github/CONTRIBUTING.md).
+Contributing guidelines, formatting, and profiling information can be found in [CONTRIBUTING.md](.github/CONTRIBUTING.md).

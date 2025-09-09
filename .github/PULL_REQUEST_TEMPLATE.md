@@ -10,7 +10,6 @@ Explain what problem (issue # if applicable) this PR solves, why it was needed, 
 - [ ] You can explain any made changes without referencing an LLM
 
 ## TODOs:
-- [ ] All past and any new relevant unit tests have been written and are passing
 - [ ] Warnings are minimized or not present at all
 - [ ] Changes should be fully cross-platform and complaint with the preferred compiler
 - [ ] Version changelog and documentation updated

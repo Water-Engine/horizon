@@ -23,9 +23,6 @@ Never commit code to the `loc` branch. It is unprotected but volatile. GH action
 - Do not abuse ternary operators, though there are plenty of situations where their use is acceptable
 - Explanatory variable and function names should be preferred to comments and doc-comments
 
-# Testing
-This project uses unit tests to verify the correctness of the engine’s foundation and functionality. To run tests, simply call `make test`. The Catch2 framework is used, and the amalgamated files are compiled directly into the test executable, resulting in longer initial build times. 
-
 # Profiling
 Water uses a profiling system that allows you to track wall time of called functions and entered scopes. You can use macros found in `core.hpp` to profile functions and scopes. This is an opt-in system, so you must use `PROFILE_FUNCTION()` and `PROFILE_SCOPE(name)` wherever desired. The data outputted by these macros can be found in `Water-Main.json`, and you can analyze it by going to `chrome://tracing` in a chromium-based browser (i.e. Edge, Google Chrome). Profiling runs on a separate thread, but it does take up CPU time. To maximize performance, profiling is disabled when building and running the `dist` configuration. You can configure the project to always enable profiling by uncommenting `// #define PROFILE` in `core.hpp`. This is not recommended, though.
 

@@ -2,7 +2,7 @@
 
 #include "core/book.hpp"
 
-#if !defined(EXAMPLE) || !defined(TEST)
+#ifdef EXAMPLE
 
 INCBIN(BOOK, "test.poly");
 

@@ -1,6 +1,6 @@
 #pragma once
 
-#if !defined(EXAMPLE) || !defined(TEST)
+#ifdef EXAMPLE
 
 struct PolyglotMove {
     uint16_t Compact;

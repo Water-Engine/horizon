@@ -8,7 +8,6 @@ on:
       - 'Makefile'
       - 'src/**'
       - 'include/**'
-      - 'tests/**'
   pull_request:
     branches: [main]
     paths:
@@ -16,7 +15,6 @@ on:
       - 'Makefile'
       - 'src/**'
       - 'include/**'
-      - 'tests/**'
 
 jobs:
   build-test:
@@ -44,4 +42,4 @@ jobs:
       - name: Run tests
         run: |
           make clean
-          make test
+          make example

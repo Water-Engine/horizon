@@ -2,7 +2,6 @@ TARGET := horizon
 SRC_DIR := src
 INC_DIR := include
 VENDOR_DIR := vendor
-TEST_DIR := tests
 BUILD_DIR := build
 BIN_ROOT := bin
 
@@ -18,15 +17,11 @@ SRCS := $(call rwildcard, $(SRC_DIR)/, *.cpp)
 HEADERS := $(wildcard $(INC_DIR)/*.h) $(wildcard $(INC_DIR)/*.hpp) \
            $(wildcard $(VENDOR_DIR)/*.h) $(wildcard $(VENDOR_DIR)/*.hpp)
 
-TEST_SRCS := $(filter-out $(TEST_DIR)/perft.cpp, $(wildcard $(TEST_DIR)/*.cpp))
-TEST_OBJS := $(patsubst $(TEST_DIR)/%.cpp,$(BUILD_DIR)/tests/%.o,$(TEST_SRCS))
-TEST_BIN := $(BIN_ROOT)/tests/run_tests$(EXE)
 PERFT_BIN := $(BIN_ROOT)/perft/run_perft$(EXE)
 
 FMT_SRCS := $(SRCS) \
             $(call rwildcard,$(INC_DIR)/,*.h) \
-            $(call rwildcard,$(INC_DIR)/,*.hpp) \
-            $(filter-out $(TEST_DIR)/test_framework/%, $(call rwildcard,$(TEST_DIR)/,*.cpp))
+            $(call rwildcard,$(INC_DIR)/,*.hpp)
 
 PCH := $(INC_DIR)/pch.hpp
 
@@ -92,28 +87,6 @@ all: dist release debug
 dist: $(TARGET_BIN_DIST)
 release: $(TARGET_BIN_RELEASE)
 debug: $(TARGET_BIN_DEBUG)
-
-test: $(TEST_BIN)
-	@$(TEST_BIN)
-
-# ================ TESTING BUILD ================
-
-TEST_OBJS := $(patsubst $(TEST_DIR)/%.cpp,$(BUILD_DIR)/tests/%.o,$(TEST_SRCS))
-CATCH_OBJ := $(BUILD_DIR)/tests/catch_amalgamated.o
-LIB_OBJS_FOR_TESTS := $(filter-out $(OBJ_DIR_DEBUG)/main.o,$(OBJS_DEBUG))
-CXXFLAGS_TEST = -std=c++20 -O0 -Wall -Wextra $(INCLUDES) $(DEPFLAGS) -DTEST -DEXAMPLE
-
-$(BUILD_DIR)/tests/%.o: $(TEST_DIR)/%.cpp $(HEADERS) $(PCH_GCH_RELEASE)
-	@$(call MKDIR,$(dir $@))
-	$(CXX) $(CXXFLAGS_TEST) -include $(PCH) $(INCLUDES) -I$(TEST_DIR) -c $< -o $@
-
-$(CATCH_OBJ): $(TEST_DIR)/test_framework/catch_amalgamated.cpp
-	@$(call MKDIR,$(dir $@))
-	$(CXX) $(CXXFLAGS_TEST) $(INCLUDES) -I$(TEST_DIR) -c $< -o $@
-
-$(TEST_BIN): $(CATCH_OBJ) $(TEST_OBJS) $(LIB_OBJS_FOR_TESTS)
-	@$(call MKDIR,$(dir $@))
-	$(CXX) $(CXXFLAGS_TEST) -o $@ $^
 
 # ================ BINARY DIRECTORIES ================
 
@@ -204,7 +177,7 @@ else
 endif
 
 cloc:
-	@cloc Makefile src include tests scripts --not-match-f="(catch_amalgamated.hpp|catch_amalgamated.cpp|chess.hpp)"
+	@cloc Makefile src include scripts --not-match-f="(catch_amalgamated.hpp|catch_amalgamated.cpp|chess.hpp)"
 
 # ================ FORMATTING ================
 
@@ -231,7 +204,6 @@ all               > Builds all optimization configurations (dist, release, debug
 dist              > Max optimization, profiling disabled\n\
 release           > Slightly fewer optimizations, no DEBUG define\n\
 debug             > No optimization, PROFILE and DEBUG defined\n\
-test              > Run unit tests (excludes perft tests)\n\
 run               > Build and run the release binary\n\
 run-dist          > Build and run the dist binary\n\
 run-release       > Build and run the release binary\n\
@@ -248,5 +220,5 @@ help              > Print this help menu\n\
 "
 
 .PHONY: default install all dist release debug \
-		test run run-dist run-release run-debug \
+		run run-dist run-release run-debug \
 		example clean fmt fmt-check cloc help

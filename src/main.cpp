@@ -6,7 +6,7 @@
 
 int main([[maybe_unused]] int argc, [[maybe_unused]] char* argv[]) {
     PROFILE_BEGIN_SESSION("Horizon", "Horizon-Main.json");
-#if !defined(EXAMPLE) || !defined(TEST)
+#ifndef EXAMPLE
     int status = launch(argc, argv);
     exit(status);
 #else
@@ -14,6 +14,9 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char* argv[]) {
     auto board = CreateRef<Board>();
     auto& book = Book::instance();
     fmt::println("Opening position in book: {}", book.is_book_pos(board));
+    if (!book.is_book_pos(board)) {
+        exit(1);
+    }
 #endif
     PROFILE_END_SESSION();
 }
