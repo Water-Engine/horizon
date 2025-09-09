@@ -48,7 +48,6 @@ jobs:
           install: >-
             mingw-w64-ucrt-x86_64-gcc
             mingw-w64-ucrt-x86_64-make
-            mingw-w64-ucrt-x86_64-clang-format
 
       - name: Run example (Linux/macOS)
         if: runner.os != 'Windows'
