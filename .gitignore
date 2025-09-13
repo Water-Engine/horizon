@@ -40,12 +40,15 @@
 # debug information files
 *.dwo
 
+# Zig build system
+.zig-cache
+zig-out
+
+# Custom ignores
 Horizon-Main.json
 **.bin
 pgn
 full_pgn_db
 
-.zig-cache
-zig-out
 
 release/
