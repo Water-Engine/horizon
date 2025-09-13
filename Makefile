@@ -17,8 +17,6 @@ SRCS := $(call rwildcard, $(SRC_DIR)/, *.cpp)
 HEADERS := $(wildcard $(INC_DIR)/*.h) $(wildcard $(INC_DIR)/*.hpp) \
            $(wildcard $(VENDOR_DIR)/*.h) $(wildcard $(VENDOR_DIR)/*.hpp)
 
-PERFT_BIN := $(BIN_ROOT)/perft/run_perft$(EXE)
-
 FMT_SRCS := $(SRCS) \
             $(call rwildcard,$(INC_DIR)/,*.h) \
             $(call rwildcard,$(INC_DIR)/,*.hpp)
